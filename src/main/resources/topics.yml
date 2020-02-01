@@ -1,0 +1,4 @@
+topics:
+  - name: "test"
+    partition: 1
+    replica: 1
