@@ -19,7 +19,7 @@ fun createTopics(
     }
 }
 
-data class Topic(val name: String, val partition: Int, val replica: Short)
+data class Topic(val name: String, val partition: Int = 1, val replica: Short = 1)
 data class Topics(val topics: List<Topic>): Iterable<Topic> by topics
 
 infix fun CreateTopicsResult.wait(seconds: Long) {

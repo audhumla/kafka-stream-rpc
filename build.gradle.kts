@@ -51,9 +51,15 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     // Use the Kotlin JUnit integration.
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
-    integrationTestImplementation("org.jetbrains.kotlin:kotlin-test-junit")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junit")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit")
+
+    integrationTestImplementation("org.jetbrains.kotlin:kotlin-test")
+    integrationTestImplementation("org.jetbrains.kotlin:kotlin-test-junit")
+    integrationTestImplementation("org.junit.jupiter:junit-jupiter-api:$junit")
+    integrationTestImplementation("org.junit.jupiter:junit-jupiter-engine:$junit")
+    integrationTestImplementation("org.jetbrains.kotlin:kotlin-test-junit")
+    integrationTestImplementation("org.apache.kafka:kafka-streams-test-utils:$kafka")
 }
 
 application {

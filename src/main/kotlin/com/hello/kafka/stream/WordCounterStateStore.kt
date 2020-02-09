@@ -9,7 +9,7 @@ import org.apache.kafka.streams.kstream.Materialized
 import org.apache.kafka.streams.kstream.TimeWindows
 import org.apache.kafka.streams.state.WindowStore
 import java.time.Duration
-import java.util.*
+import java.util.Properties
 
 
 class WordCounterKafkaStreamStateStore(
