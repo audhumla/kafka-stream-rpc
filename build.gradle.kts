@@ -31,8 +31,8 @@ val integrationTestImplementation: Configuration by configurations.getting {
 configurations["integrationTestRuntimeOnly"].extendsFrom(configurations.runtimeOnly.get())
 
 
-val kafka = "2.2.1"
-val junit = "5.1.0"
+val kafka = "2.5.0"
+val junit = "5.6.2"
 
 dependencies {
     // Align versions of all Kotlin components

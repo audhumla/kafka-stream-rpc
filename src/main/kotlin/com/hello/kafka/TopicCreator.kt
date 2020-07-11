@@ -23,5 +23,5 @@ data class Topic(val name: String, val partition: Int = 1, val replica: Short = 
 data class Topics(val topics: List<Topic>): Iterable<Topic> by topics
 
 infix fun CreateTopicsResult.wait(seconds: Long) {
-    this.all().get(seconds, SECONDS)
+    all().get(seconds, SECONDS)
 }

@@ -31,20 +31,20 @@ fun main() {
     })
 }
 
-fun createTopology(topics: Topics, processor: WordCounterProcessor) =
+fun createTopology(topics: Topics, processor: WordCounterProcessor): Topology =
     Topology()
         .addSource("input-topic", topics.topics[0].name)
-        .addProcessor(processor.name, ProcessorSupplier<String, String> { processor })
-        .addStateStore(inMemoryStateStore(), processor.name)
+        .addProcessor(processor.name, ProcessorSupplier<String, String> { processor }, "input-topic")
+        .addStateStore(inMemoryStateStore(processor.stateStoreName), processor.name)
         // add the sink processor node that takes Kafka topic "sink-topic" as output
         // and the WordCountProcessor node as its upstream processor
         .addSink("sink-processor", topics.topics[1].name, processor.name)
 
-fun inMemoryStateStore(): StoreBuilder<KeyValueStore<String, Long>> =
+fun inMemoryStateStore(name: String): StoreBuilder<KeyValueStore<String, String>> =
         Stores
             .keyValueStoreBuilder(
-                Stores.persistentKeyValueStore("Counts"),
+                Stores.persistentKeyValueStore(name),
                 Serdes.String(),
-                Serdes.Long()
+                Serdes.String()
             )
             .withLoggingDisabled() // disable backing up the store to a changelog topic
