@@ -22,6 +22,9 @@ fun createTopics(
 data class Topic(val name: String, val partition: Int = 1, val replica: Short = 1)
 data class Topics(val topics: List<Topic>): Iterable<Topic> by topics
 
+fun String.toTopic() = Topic(this)
+fun List<String>.toTopics() = Topics(map { topicName -> topicName.toTopic() })
+
 infix fun CreateTopicsResult.wait(seconds: Long) {
     all().get(seconds, SECONDS)
 }

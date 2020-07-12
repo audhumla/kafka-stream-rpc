@@ -12,20 +12,22 @@ class WordCounterProcessor : Processor<String, String> {
     val name = "WordCounterProcessor"
     val stateStoreName = "Counts"
     private lateinit var kvStore: KeyValueStore<String, String>
+    private lateinit var context: ProcessorContext
 
+    @SuppressWarnings("unchecked")
     override fun init(context: ProcessorContext?) {
         if (context != null) {
+            this.context = context
             kvStore = context.getStateStore(stateStoreName) as KeyValueStore<String, String>
         }
 
         context?.let { ctx ->
             ctx.schedule(
-                Duration.ofSeconds(3),
+                Duration.ofMinutes(1),
                 PunctuationType.STREAM_TIME
             ) { _ ->
                 kvStore.all().use { iter ->
                     iter.forEachRemaining {
-                        ctx.forward(it.key, it.value)
                         kvStore.delete(it.key)
                     }
                 }
@@ -42,8 +44,16 @@ class WordCounterProcessor : Processor<String, String> {
             ?.split(regex = "\\W+".toRegex())
             ?.stream()
             ?.forEach { word ->
-                val count = kvStore.get(word)?.let { it + 1 } ?: 1
-                kvStore.put(word, count.toString());
+                val count = kvStore.get(word)
+                        ?.toInt()
+                        ?.let {
+                            it + 1
+                        } ?: 1
+                count.toString().run {
+                    kvStore.put(word, this)
+                    context.forward(word, this)
+                    context.commit()
+                }
             }
     }
 

@@ -1,23 +1,20 @@
 package com.hello.kafka.stream
 
-import com.hello.kafka.Topic
-import com.hello.kafka.Topics
 import com.hello.kafka.start.createTopology
-import com.hello.kafka.stream.support.TopologyTest
-import org.apache.kafka.clients.consumer.ConsumerRecord
+import com.hello.kafka.stream.support.KafkaStreamTestUtil
+import com.hello.kafka.toTopics
 import org.apache.kafka.common.serialization.Serdes
-import org.apache.kafka.common.serialization.StringSerializer
 import org.apache.kafka.streams.KafkaStreams
 import org.apache.kafka.streams.StreamsConfig
-import org.apache.kafka.streams.Topology
-import org.apache.kafka.streams.TopologyTestDriver
-import org.apache.kafka.streams.test.ConsumerRecordFactory
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import java.time.Duration
 import java.util.Properties
-import java.util.concurrent.TimeUnit
 
 
 private fun getProps(): Properties {
@@ -30,35 +27,52 @@ private fun getProps(): Properties {
 }
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class WordCounterProcessorTest() : TopologyTest() {
+class WordCounterProcessorTest {
 
     val inputTopicName = "test-input"
     val outputTopicName = "test-output"
     val sut = WordCounterProcessor()
-    val topics = Topics(
-            listOf(
-                    Topic(inputTopicName, 1, 1),
-                    Topic(outputTopicName, 1, 1)
-            )
-    )
-    override val topology = createTopology(topics, sut)
-    override val props: Properties = getProps()
+    val topics = listOf(inputTopicName, outputTopicName).toTopics()
+    val topology = createTopology(topics, sut)
+    val props: Properties = getProps()
+
+    val testUtil = KafkaStreamTestUtil(topology, props, inputTopicName, outputTopicName)
+    val streams = KafkaStreams(topology, props)
+
+    val kvStore = testUtil.testDriver.getKeyValueStore<String, String>("Counts")
+
+
+    @BeforeAll
+    fun init() {
+        streams.start()
+    }
+
+    @AfterAll
+    fun afterAll() {
+        streams.close()
+        testUtil.afterAll(null)
+    }
 
     @Test
-    fun test() {
-        val streams = KafkaStreams(topology, props)
-        streams.start()
-
-        produce(inputTopicName, "a","a")
-        produce(inputTopicName,"a","b")
-        produce(inputTopicName,"a","c")
-        produce(inputTopicName,"a","a")
-        produce(inputTopicName,"a","a")
-
-        TimeUnit.SECONDS.sleep(5L)
-        repeat(5) {
-            println(consume(outputTopicName))
+    fun `should increment counter in the state store`() {
+        repeat(10) {
+            testUtil.produce("a","a")
         }
+
+        val count = kvStore.get("a")
+
+        assertThat(count).isEqualTo("10")
+    }
+
+    @Test
+    fun `should increment forward count`() {
+        repeat(10) {
+            testUtil.produce("a","allora")
+        }
+
+        val output = testUtil.consume()
+
+        println(output)
     }
 
 }

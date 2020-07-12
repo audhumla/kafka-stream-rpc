@@ -52,6 +52,7 @@ dependencies {
     // Use the Kotlin JUnit integration.
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junit")
+    testImplementation("org.assertj:assertj-core:3.6.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit")
 
     integrationTestImplementation("org.jetbrains.kotlin:kotlin-test")
@@ -60,9 +61,10 @@ dependencies {
     integrationTestImplementation("org.junit.jupiter:junit-jupiter-engine:$junit")
     integrationTestImplementation("org.jetbrains.kotlin:kotlin-test-junit")
     integrationTestImplementation("org.apache.kafka:kafka-streams-test-utils:$kafka")
+    integrationTestImplementation("org.assertj:assertj-core:3.6.2")
 }
 
 application {
     // Define the main class for the application
-    mainClassName = "com.hello.kafka.start.AppKt"
+    mainClassName = "com.hello.kafka.start.StartWordCounterProcessor"
 }
