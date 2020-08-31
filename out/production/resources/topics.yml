@@ -1,0 +1,7 @@
+topics:
+  - name: "word"
+    partition: 1
+    replica: 1
+  - name: "word-count"
+    partition: 1
+    replica: 1

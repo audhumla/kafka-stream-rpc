@@ -3,7 +3,7 @@ package com.hello.kafka
 import org.apache.kafka.clients.admin.CreateTopicsResult
 import org.apache.kafka.clients.admin.KafkaAdminClient
 import org.apache.kafka.clients.admin.NewTopic
-import java.util.*
+import java.util.Properties
 import java.util.concurrent.TimeUnit.SECONDS
 
 fun createTopics(
@@ -25,6 +25,6 @@ data class Topics(val topics: List<Topic>): Iterable<Topic> by topics
 fun String.toTopic() = Topic(this)
 fun List<String>.toTopics() = Topics(map { topicName -> topicName.toTopic() })
 
-infix fun CreateTopicsResult.wait(seconds: Long) {
+infix fun CreateTopicsResult.andWait(seconds: Long) {
     all().get(seconds, SECONDS)
 }

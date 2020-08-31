@@ -8,12 +8,9 @@ import org.apache.kafka.streams.KafkaStreams
 import org.apache.kafka.streams.StreamsConfig
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import java.time.Duration
 import java.util.Properties
 
 
@@ -28,19 +25,15 @@ private fun getProps(): Properties {
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class WordCounterProcessorTest {
-
     val inputTopicName = "test-input"
     val outputTopicName = "test-output"
     val sut = WordCounterProcessor()
     val topics = listOf(inputTopicName, outputTopicName).toTopics()
     val topology = createTopology(topics, sut)
     val props: Properties = getProps()
-
     val testUtil = KafkaStreamTestUtil(topology, props, inputTopicName, outputTopicName)
     val streams = KafkaStreams(topology, props)
-
-    val kvStore = testUtil.testDriver.getKeyValueStore<String, String>("Counts")
-
+    val kvStore = testUtil.getStateStore<String>("Counts")
 
     @BeforeAll
     fun init() {
@@ -54,25 +47,13 @@ class WordCounterProcessorTest {
     }
 
     @Test
-    fun `should increment counter in the state store`() {
+    fun `should increment the counter in the state store`() {
         repeat(10) {
-            testUtil.produce("a","a")
+            testUtil.produce(value = "test-message")
         }
 
-        val count = kvStore.get("a")
+        val count = kvStore.get("test")
 
         assertThat(count).isEqualTo("10")
     }
-
-    @Test
-    fun `should increment forward count`() {
-        repeat(10) {
-            testUtil.produce("a","allora")
-        }
-
-        val output = testUtil.consume()
-
-        println(output)
-    }
-
 }

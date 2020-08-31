@@ -1,6 +1,6 @@
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin.
-    id("org.jetbrains.kotlin.jvm") version "1.3.41"
+    id("org.jetbrains.kotlin.jvm") version "1.3.72"
 
     // Apply the application plugin to add support for building a CLI application.
     application
@@ -17,8 +17,8 @@ repositories {
 
 sourceSets {
     create("integrationTest") {
-        java.srcDir(file("src/integration-test/kotlin"))
-        resources.srcDir(file("src/integration-test/resources"))
+        java.srcDir(file("src/integrationTest/kotlin"))
+        resources.srcDir(file("src/integrationTest/resources"))
         compileClasspath += sourceSets.main.get().output
         runtimeClasspath += sourceSets.main.get().output
     }
