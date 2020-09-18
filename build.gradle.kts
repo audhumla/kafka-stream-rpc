@@ -1,9 +1,5 @@
 plugins {
-    // Apply the Kotlin JVM plugin to add support for Kotlin.
-    id("org.jetbrains.kotlin.jvm") version "1.3.72"
-
-    // Apply the application plugin to add support for building a CLI application.
-    application
+    kotlin("jvm") version "1.4.10"
 }
 
 repositories {
@@ -40,11 +36,11 @@ dependencies {
     // Use the Kotlin JDK 8 standard library.
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     // Kafka deps
-    compile("org.apache.kafka:kafka-streams:$kafka")
+    implementation("org.apache.kafka:kafka-streams:$kafka")
 
     // config
-    compile("com.sksamuel.hoplite:hoplite-core:1.1.4")
-    compile("com.sksamuel.hoplite:hoplite-yaml:1.1.4")
+    implementation("com.sksamuel.hoplite:hoplite-core:1.1.4")
+    implementation("com.sksamuel.hoplite:hoplite-yaml:1.1.4")
 
     // Tests
     // Use the Kotlin test library.
@@ -62,9 +58,4 @@ dependencies {
     integrationTestImplementation("org.jetbrains.kotlin:kotlin-test-junit")
     integrationTestImplementation("org.apache.kafka:kafka-streams-test-utils:$kafka")
     integrationTestImplementation("org.assertj:assertj-core:3.6.2")
-}
-
-application {
-    // Define the main class for the application
-    mainClassName = "com.hello.kafka.start.StartWordCounterProcessor"
 }
