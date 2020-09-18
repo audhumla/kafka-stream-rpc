@@ -15,7 +15,7 @@ import org.apache.kafka.streams.state.Stores
 
 fun main() {
     val topics = ConfigLoader().loadConfigOrThrow<Topics>("/topics.yml")
-    val props = loadProps("/kafkastream.properties")
+    val props = loadProps("kafkastream.properties")
     createTopics(props, topics) andWait 60
 
     val processor = WordCounterProcessor()
